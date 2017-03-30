@@ -73,7 +73,7 @@ class ChaCha20Random extends ChaCha20Block {
     /**
      * generates an PRNG object (possibly randomized)
      */
-    public function __construct(string $key=NULL, string $nonce=NULL, int $block_ctr=NULL, $block_sub_ctr = NULL) {
+    public function __construct(string $key=NULL, string $nonce=NULL, int $block_ctr=NULL, int $block_sub_ctr = NULL) {
 
         // provide random if necessary
         if ($key === NULL) {
