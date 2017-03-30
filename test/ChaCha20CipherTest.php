@@ -75,6 +75,50 @@ final class ChaCha20CipherTest extends TestCase
         // rfc7539 test vector 2.4.2
 
         $key_stream_1st_block = $c->serialize_state(ChaCha20Block::STATE_FINAL);
+
+        $input = "Ladies and Gentlemen of the class of '99: If I could offer you only one tip for the future, sunscreen would be it.";
+
+        $this->assertEquals(114, strlen($input), "invalid input length");
+
+        $this->assertEquals(
+            "4c616469657320616e642047656e746c"
+            . "656d656e206f662074686520636c6173"
+            . "73206f66202739393a20496620492063"
+            . "6f756c64206f6666657220796f75206f"
+            . "6e6c79206f6e652074697020666f7220"
+            . "746865206675747572652c2073756e73"
+            . "637265656e20776f756c642062652069"
+            . "742e",
+            bin2hex($input),
+            "invalid input content");
+
+        $output = $c->transform($input);
+
+        $this->assertEquals(114, strlen($output), "invalid input length");
+
+        $key_stream_2nd_block = $c->serialize_state(ChaCha20Block::STATE_FINAL);
+
+        $key_steam = substr($key_stream_1st_block . $key_stream_2nd_block, 0, 114);
+
+        $this->assertEquals(
+            "224f51f3401bd9e12fde276fb8631ded8c131f823d2c06"
+            . "e27e4fcaec9ef3cf788a3b0aa372600a92b57974cded2b"
+            . "9334794cba40c63e34cdea212c4cf07d41b769a6749f3f"
+            . "630f4122cafe28ec4dc47e26d4346d70b98c73f3e9c53a"
+            . "c40c5945398b6eda1a832c89c167eacd901d7e2bf363",
+            bin2hex($key_steam), "invalid key_stream");
+
+        $this->assertEquals(
+            "6e2e359a2568f98041ba0728dd0d6981"
+            ."e97e7aec1d4360c20a27afccfd9fae0b"
+            ."f91b65c5524733ab8f593dabcd62b357"
+            ."1639d624e65152ab8f530c359f0861d8"
+            ."07ca0dbf500d6a6156a38e088a22b65e"
+            ."52bc514d16ccf806818ce91ab7793736"
+            ."5af90bbf74a35be6b40b8eedf2785e42"
+            ."874d",
+            bin2hex($output),
+            "invalid output content");
     }
 
     /**
