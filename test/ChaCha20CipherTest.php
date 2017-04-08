@@ -24,7 +24,7 @@ final class ChaCha20CipherTest extends TestCase
         // valued constructor
         $c = new ChaCha20Cipher(hex2bin($key), hex2bin($nonce), $ctr, 0);
 
-        // initial
+        // first block setup
         $this->assertEquals([
                 0x61707865, 0x3320646e, 0x79622d32, 0x6b206574,
                 0x03020100, 0x07060504, 0x0b0a0908, 0x0f0e0d0c,
@@ -34,13 +34,13 @@ final class ChaCha20CipherTest extends TestCase
             $c->get_state(ChaCha20Block::STATE_INITIAL),
             "1st initial state failed");
 
-        // check counter
+        // check counter before operation
         $this->assertEquals(1, $c->get_counter());
 
-        // check counter
+        // check counter before operation
         $this->assertEquals(0, $c->get_sub_counter());
 
-        // 1st block final
+        // first block after block operation
         $this->assertEquals([
                 ChaCha20Block::buildUint32(0xf351, 0x4f22),
                 ChaCha20Block::buildUint32(0xe1d9, 0x1b40),
@@ -96,6 +96,44 @@ final class ChaCha20CipherTest extends TestCase
 
         $this->assertEquals(114, strlen($output), "invalid input length");
 
+        // second block setup
+        $this->assertEquals([
+                0x61707865, 0x3320646e, 0x79622d32, 0x6b206574,
+                0x03020100, 0x07060504, 0x0b0a0908, 0x0f0e0d0c,
+                0x13121110, 0x17161514, 0x1b1a1918, 0x1f1e1d1c,
+                0x00000002, 0x00000000, 0x4a000000, 0x00000000
+            ],
+            $c->get_state(ChaCha20Block::STATE_INITIAL),
+            "2nd initial state failed");
+
+        // check counter after operation
+        $this->assertEquals(2, $c->get_counter());
+
+        // check counter after operation
+        $this->assertEquals(50, $c->get_sub_counter());
+
+        // second block after block operation
+        $this->assertEquals([
+                ChaCha20Block::buildUint32(0x9f74, 0xa669),
+                0x410f633f,
+                0x28feca22,
+                0x7ec44dec,
+                0x6d34d426,
+                0x738cb970,
+                0x3ac5e9f3,
+                0x45590cc4,
+                ChaCha20Block::buildUint32(0xda6e, 0x8b39),
+                ChaCha20Block::buildUint32(0x892c, 0x831a),
+                ChaCha20Block::buildUint32(0xcdea, 0x67c1),
+                0x2b7e1d90,
+                0x037463f3,
+                ChaCha20Block::buildUint32(0xa11a, 0x2073),
+                ChaCha20Block::buildUint32(0xe8bc, 0xfb88),
+                ChaCha20Block::buildUint32(0xedc4, 0x9139)
+            ],
+            $c->get_state(ChaCha20Block::STATE_FINAL),
+            "2nd final state failed");
+
         $key_stream_2nd_block = $c->serialize_state(ChaCha20Block::STATE_FINAL);
 
         $key_steam = substr($key_stream_1st_block . $key_stream_2nd_block, 0, 114);
@@ -118,7 +156,7 @@ final class ChaCha20CipherTest extends TestCase
             ."5af90bbf74a35be6b40b8eedf2785e42"
             ."874d",
             bin2hex($output),
-            "invalid output content");
+            "invalid cipher_text");
     }
 
     /**
