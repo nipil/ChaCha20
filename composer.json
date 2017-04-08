@@ -1,5 +1,5 @@
 {
-    "name": "nipil/ChaCha20",
+    "name": "nipil/chacha20",
     "description": "A pure-php implementation of ChaCha20 for both 32-bit and 64 bits",
     "require-dev": {
         "phpunit/phpunit": "^6.0"
