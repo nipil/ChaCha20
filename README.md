@@ -4,8 +4,18 @@
 
 A pure-php implementation of ChaCha20, fully tested on both 32-bit php and 64 bits.
 
-Requires PHP 7.0
+## Install
+
+Tested on Ubuntu 16.04 LTS (with php 7.0)
 
 phpunit asks for following system components :
 
-    sudo apt-get install git composer php-cli php-xml php-mbstring zip
+    sudo apt-get install composer php-xml php-mbstring zip
+
+Install with composer
+
+    composer install
+
+Run tests with composer
+
+    composer exec phpunit
