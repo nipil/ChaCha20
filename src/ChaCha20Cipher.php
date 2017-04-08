@@ -75,7 +75,7 @@ class ChaCha20Cipher extends ChaCha20Block {
         for ($i = 0; $i < strlen($input); $i++)
         {
             // if end of current block, generate a new one
-            if ($this->block_sub_index == ChaCha20Block::STATE_ARRAY_LENGTH)
+            if ($this->block_sub_index == ChaCha20Block::STATE_ARRAY_LENGTH * ChaCha20Block::INT_BIT_LENGTH >> 3)
             {
                 $this->block_sub_index = 0;
                 $this->inc_counter();
