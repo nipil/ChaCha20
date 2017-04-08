@@ -85,9 +85,9 @@ class ChaCha20Cipher extends ChaCha20Block {
 
             // encrypt single byte
             $in_byte = $input[$i];
-            $xor_byte = $this->random_string[$this->block_sub_index];
-            $out_byte = ord($in_byte) ^ ord($xor_byte);
-            $output[$i] = $out_byte;
+            $key_byte = $this->random_string[$this->block_sub_index];
+            $out_byte_ord = ord($in_byte) ^ ord($key_byte);
+            $output[$i] = chr($out_byte_ord);
             $this->block_sub_index++;
         }
 
