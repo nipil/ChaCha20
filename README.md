@@ -1,6 +1,7 @@
 # ChaCha20
 
 [![Build Status](https://travis-ci.org/nipil/ChaCha20.svg?branch=master)](https://travis-ci.org/nipil/ChaCha20)
+[![Coverage Status](https://coveralls.io/repos/github/nipil/ChaCha20/badge.svg?branch=master)](https://coveralls.io/github/nipil/ChaCha20?branch=master)
 
 A pure-php implementation of ChaCha20, fully tested on both 32-bit php and 64 bits.
 
