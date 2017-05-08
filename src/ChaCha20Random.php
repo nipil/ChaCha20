@@ -21,8 +21,11 @@ class ChaCha20Random extends ChaCha20Block {
     private $block_sub_index;
 
     public function set_sub_counter(int $index) {
-        if ($index < 0 or $index >= ChaCha20Block::STATE_KEY_LENGTH) {
-            throw new ChaCha20Exception(sprintf("Sub-counter index %d is outstide range [0..%d[", $index, ChaCha20Block::STATE_KEY_LENGTH.'['));
+        if ($index < 0 or $index >= ChaCha20Block::STATE_ARRAY_LENGTH) {
+            throw new ChaCha20Exception(sprintf(
+                "Sub-counter index %d is outstide range [0..%d[",
+                $index,
+                ChaCha20Block::STATE_ARRAY_LENGTH));
         }
         $this->block_sub_index = $index;
     }
