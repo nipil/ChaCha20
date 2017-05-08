@@ -7,7 +7,7 @@ use ChaCha20\ChaCha20Block;
 use ChaCha20\ChaCha20Exception;
 
 /**
- * @covers ChaCha20Block
+ * @covers ChaCha20\ChaCha20Block
  */
 final class ChaCha20BlockTest extends TestCase
 {

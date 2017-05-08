@@ -9,7 +9,7 @@ use ChaCha20\ChaCha20Random;
 use ChaCha20\ChaCha20Cipher;
 
 /**
- * @covers ChaCha20Cipher
+ * @covers ChaCha20\ChaCha20Cipher
  */
 final class ChaCha20CipherTest extends TestCase
 {
