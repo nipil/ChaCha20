@@ -42,6 +42,9 @@ final class ChaCha20RandomTest extends TestCase
             $n);
     }
 
+    /**
+     * @expectedException ChaCha20\ChaCha20Exception
+     */
     public function testExceptionSubCounterNegative()
     {
         $c = new ChaCha20Random(
@@ -51,6 +54,9 @@ final class ChaCha20RandomTest extends TestCase
             -1);
     }
 
+    /**
+     * @expectedException ChaCha20\ChaCha20Exception
+     */
     public function testExceptionSubCounterOverload()
     {
         $c = new ChaCha20Random(
