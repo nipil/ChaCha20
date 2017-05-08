@@ -27,6 +27,34 @@ final class ChaCha20BlockTest extends TestCase
     }
 
     /**
+     * @expectedException ChaCha20\ChaCha20Exception
+     */
+    public function testBuildUInt32_InvalidHighPart_Negative() {
+        ChaCha20Block::buildUint32(-1, 0);
+    }
+
+    /**
+     * @expectedException ChaCha20\ChaCha20Exception
+     */
+    public function testBuildUInt32_InvalidHighPart_Overload() {
+        ChaCha20Block::buildUint32(0x10000, 0);
+    }
+
+    /**
+     * @expectedException ChaCha20\ChaCha20Exception
+     */
+    public function testBuildUInt32_InvalidLowPart_Negative() {
+        ChaCha20Block::buildUint32(0, -1);
+    }
+
+    /**
+     * @expectedException ChaCha20\ChaCha20Exception
+     */
+    public function testBuildUInt32_InvalidLowPart_Overload() {
+        ChaCha20Block::buildUint32(0, 0x10000);
+    }
+
+    /**
      * @dataProvider providerAddCap
      */
     public function testAddCap(int $a, int $b, int $expected)
@@ -168,24 +196,21 @@ final class ChaCha20BlockTest extends TestCase
         $this->assertEquals(0x7998bfda, ChaCha20Block::xor(0x01020304, 0x789abcde));
     }
 
-    public function testSetConstIndexValue()
+    public function testSetIndices()
     {
-        $this->assertTrue(TRUE);
-    }
-
-    public function testSetKeyIndexValue()
-    {
-        $this->assertTrue(TRUE);
-    }
-
-    public function testSetNonceIndexValue()
-    {
-        $this->assertTrue(TRUE);
-    }
-
-    public function testSetCounter()
-    {
-        $this->assertTrue(TRUE);
+        $c = new ChaCha20Block();
+        for ($i=0; $i<ChaCha20Block::STATE_KEY_LENGTH; $i++) {
+            $c->set_key_index_value($i, 0x789abcde + $i);
+        }
+        for ($i=0; $i<ChaCha20Block::STATE_NONCE_LENGTH; $i++) {
+            $c->set_nonce_index_value($i, 0x01020304 + $i);
+        }
+        $this->assertEquals(
+            "65787061" . "6e642033" . "322d6279" . "7465206b" .
+            "debc9a78" . "dfbc9a78" . "e0bc9a78" . "e1bc9a78" .
+            "e2bc9a78" . "e3bc9a78" . "e4bc9a78" . "e5bc9a78" .
+            "00000000" . "04030201" . "05030201" . "06030201",
+            bin2hex($c->serialize_state(ChaCha20Block::STATE_INITIAL)));
     }
 
     public function testIncCounterNoOverflow()
@@ -217,19 +242,31 @@ final class ChaCha20BlockTest extends TestCase
         printf("0x%08x\n", $c->get_counter());
     }
 
-    public function testBinToInternal()
+    /**
+     * @expectedException ChaCha20\ChaCha20Exception
+     */
+    public function testInvalidSerializeState()
     {
-        $this->assertTrue(TRUE);
+        $c = new ChaCha20Block();
+        $c->serialize_state(-1);
     }
 
-    public function testSetKey()
+    /**
+     * @expectedException ChaCha20\ChaCha20Exception
+     */
+    public function testInvalidGetState()
     {
-        $this->assertTrue(TRUE);
+        $c = new ChaCha20Block();
+        $c->get_state(-1);
     }
 
-    public function testSetNonce()
+    /**
+     * @expectedException ChaCha20\ChaCha20Exception
+     */
+    public function testInvalidSetState()
     {
-        $this->assertTrue(TRUE);
+        $c = new ChaCha20Block();
+        $c->set_state(array(), -1);
     }
 
     public function testQuarterRound()
@@ -278,6 +315,56 @@ final class ChaCha20BlockTest extends TestCase
             $vector);
     }
 
+    public function testSetState()
+    {
+        $c = new ChaCha20Block();
+
+        $va = [
+            ChaCha20Block::buildUint32(0x8795, 0x31e0),
+            ChaCha20Block::buildUint32(0xc5ec, 0xf37d),
+            0x516461b1, // 2
+            ChaCha20Block::buildUint32(0xc9a6, 0x2f8a),
+            0x44c20ef3,
+            0x3390af7f,
+            ChaCha20Block::buildUint32(0xd9fc, 0x690b),
+            0x2a5f714c, // 7
+            0x53372767, // 8
+            ChaCha20Block::buildUint32(0xb00a, 0x5631),
+            ChaCha20Block::buildUint32(0x974c, 0x541a),
+            0x359e9963,
+            0x5c971061,
+            0x3d631689, // 13
+            0x2098d9d6,
+            ChaCha20Block::buildUint32(0x91db, 0xd320)
+        ];
+
+        $vb = array_keys($va);
+
+        $vc = array_reverse($va);
+
+        // initial
+        $c->set_state($va, ChaCha20Block::STATE_INITIAL);
+        $this->assertEquals(
+            $va,
+            $c->get_state(ChaCha20Block::STATE_INITIAL),
+            "initial set failed");
+
+        // intermediate
+        $c->set_state($vb, ChaCha20Block::STATE_INTERMEDIATE);
+        $this->assertEquals(
+            $vb,
+            $c->get_state(ChaCha20Block::STATE_INTERMEDIATE),
+            "intermediate set failed");
+
+
+        // final
+        $c->set_state($vc, ChaCha20Block::STATE_FINAL);
+        $this->assertEquals(
+            $vc,
+            $c->get_state(ChaCha20Block::STATE_FINAL),
+            "final set failed");
+    }
+
     public function testConstructorEmpty()
     {
         // rfc7539 test vector 2.3.2
@@ -292,6 +379,15 @@ final class ChaCha20BlockTest extends TestCase
             ],
             $c->get_state(ChaCha20Block::STATE_INITIAL),
             "clear state failed");
+
+        // initial
+        $this->assertEquals(
+            "65787061" . "6e642033" . "322d6279" . "7465206b" .
+            "00000000" . "00000000" . "00000000" . "00000000" .
+            "00000000" . "00000000" . "00000000" . "00000000" .
+            "00000000" . "00000000" . "00000000" . "00000000",
+            bin2hex($c->serialize_state(ChaCha20Block::STATE_INITIAL)),
+            "initial serialized failed");
 
         // check counter
         $this->assertEquals(0, $c->get_counter());
@@ -316,6 +412,15 @@ final class ChaCha20BlockTest extends TestCase
             ],
             $c->get_state(ChaCha20Block::STATE_INITIAL),
             "initial state failed");
+
+        // initial
+        $this->assertEquals(
+            "65787061" . "6e642033" . "322d6279" . "7465206b" .
+            "00010203" . "04050607" . "08090a0b" . "0c0d0e0f" .
+            "10111213" . "14151617" . "18191a1b" . "1c1d1e1f" .
+            "01000000" . "00000009" . "0000004a" . "00000000",
+            bin2hex($c->serialize_state(ChaCha20Block::STATE_INITIAL)),
+            "initial serialize failed");
 
         // check counter
         $this->assertEquals(1, $c->get_counter());
@@ -354,6 +459,15 @@ final class ChaCha20BlockTest extends TestCase
             $c->get_state(ChaCha20Block::STATE_INTERMEDIATE),
             "intermediate state failed");
 
+        // intermediate
+        $this->assertEquals(
+            "ab787783" . "63d738e2" . "1ee27aa6" . "2fbb5059" .
+            "c7d0f2c4" . "2fbb62fc" . "fc18a08f" . "b7c75e3f" .
+            "c2715233" . "f38994f2" . "fca8bdea" . "bd6ee482" .
+            "b4129cd1" . "de164eb0" . "cbd0839e" . "a2503c4e",
+            bin2hex($c->serialize_state(ChaCha20Block::STATE_INTERMEDIATE)),
+            "intermediate serialize failed");
+
         // final
         $this->assertEquals([
                 ChaCha20Block::buildUint32(0xe4e7, 0xf110),
@@ -376,11 +490,14 @@ final class ChaCha20BlockTest extends TestCase
             $c->get_state(ChaCha20Block::STATE_FINAL),
             "final state failed");
 
-        // serialize
+        // final
         $this->assertEquals(
-            "10f1e7e4d13b5915500fdd1fa32071c4c7d1f4c733c068030422aa9ac3d46c4ed2826446079faa0914c2d705d98b02a2b5129cd1de164eb9cbd083e8a2503c4e",
+            "10f1e7e4" . "d13b5915" . "500fdd1f" . "a32071c4" .
+            "c7d1f4c7" . "33c06803" . "0422aa9a" . "c3d46c4e" .
+            "d2826446" . "079faa09" . "14c2d705" . "d98b02a2" .
+            "b5129cd1" . "de164eb9" . "cbd083e8" . "a2503c4e",
             bin2hex($c->serialize_state(ChaCha20Block::STATE_FINAL)),
-            "serialize failed");
+            "final serialize failed");
     }
 
     /**
