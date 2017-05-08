@@ -42,13 +42,22 @@ final class ChaCha20RandomTest extends TestCase
             $n);
     }
 
-    /**
-     * @expectedException ChaCha20\ChaCha20Exception
-     */
-    public function testExceptionSubCounter()
+    public function testExceptionSubCounterNegative()
     {
-        $r = new ChaCha20Random();
-        $r->set_sub_counter(-1);
+        $c = new ChaCha20Random(
+            "f0e1d2v3b4a5968778695a4b3c2d1e0f",
+            "1c2b3a495867",
+            1,
+            -1);
+    }
+
+    public function testExceptionSubCounterOverload()
+    {
+        $c = new ChaCha20Random(
+            "f0e1d2v3b4a5968778695a4b3c2d1e0f",
+            "1c2b3a495867",
+            1,
+            ChaCha20Block::STATE_ARRAY_LENGTH);
     }
 
     public function testMultipleRand()
