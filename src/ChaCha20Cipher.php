@@ -38,20 +38,6 @@ class ChaCha20Cipher extends ChaCha20Block {
      */
     public function __construct(string $key, string $nonce, int $block_ctr, int $block_sub_ctr) {
 
-        // provide random if necessary
-        if ($key === NULL) {
-            throw new ChaCha20Exception(sprintf("Cipher requires to provide a key"));
-        }
-        if ($nonce === NULL) {
-            throw new ChaCha20Exception(sprintf("Cipher requires to provide a nonce"));
-        }
-        if ($block_ctr === NULL) {
-            throw new ChaCha20Exception(sprintf("Cipher requires to provide a block counter"));
-        }
-        if ($block_sub_ctr === NULL) {
-            throw new ChaCha20Exception(sprintf("Cipher requires to provide a sub-block index"));
-        }
-
         // initialize ChaCha20Block
         parent::__construct($key, $nonce, $block_ctr);
 
