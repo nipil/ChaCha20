@@ -42,7 +42,7 @@ class ChaCha20Cipher extends ChaCha20Block {
         parent::__construct($key, $nonce, $block_ctr);
 
         // initialize state index
-        $this->block_sub_index = $block_sub_ctr;
+        $this->set_sub_counter($block_sub_ctr);
 
         // compute first block of data
         $this->compute_block();
