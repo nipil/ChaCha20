@@ -264,9 +264,9 @@ class ChaCha20Block {
     /**
      * set key from a least-significant-bit-starting BINARY string
      */
-    public function set_key(string $string) {
+    public function set_key(string $key_bin_string) {
         $this->bin_to_initial(
-            $string,
+            $key_bin_string,
             "Key",
             self::STATE_KEY_BASEINDEX,
             self::STATE_KEY_LENGTH);
@@ -275,9 +275,9 @@ class ChaCha20Block {
     /**
      * set nonce from a least-significant-bit-starting BINARY string
      */
-    public function set_nonce(string $string) {
+    public function set_nonce(string $nonce_bin_string) {
         $this->bin_to_initial(
-            $string,
+            $nonce_bin_string,
             "Nonce",
             self::STATE_NONCE_BASEINDEX,
             self::STATE_NONCE_LENGTH);
