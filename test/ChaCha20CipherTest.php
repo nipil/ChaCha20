@@ -64,9 +64,32 @@ final class ChaCha20CipherTest extends TestCase
     }
 
     /**
+     * @expectedException ChaCha20\ChaCha20Exception
+     */
+    public function testConstructorSubCounterNegative()
+    {
+        $c = new ChaCha20Cipher(
+            "f0e1d2v3b4a5968778695a4b3c2d1e0f",
+            "1c2b3a495867",
+            1,
+            -1);
+    }
+
+    /**
+     * @expectedException ChaCha20\ChaCha20Exception
+     */
+    public function testConstructorSubCounterOverload()
+    {
+        $c = new ChaCha20Cipher(
+            "f0e1d2v3b4a5968778695a4b3c2d1e0f",
+            "1c2b3a495867",
+            1,
+            ChaCha20Cipher::MAX_SUB_COUNTER);
+    }
+
+    /**
      * @depends testConstructorValued
      */
-
     public function testCipher($c)
     {
         // rfc7539 test vector 2.4.2
