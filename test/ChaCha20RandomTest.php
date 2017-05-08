@@ -7,9 +7,6 @@ use ChaCha20\ChaCha20Exception;
 use ChaCha20\ChaCha20Block;
 use ChaCha20\ChaCha20Random;
 
-/**
- * @covers ChaCha20\ChaCha20Random
- */
 final class ChaCha20RandomTest extends TestCase
 {
     public function testConstructorEmpty()
