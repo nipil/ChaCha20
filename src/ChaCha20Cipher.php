@@ -11,6 +11,8 @@ namespace ChaCha20;
  */
 class ChaCha20Cipher extends ChaCha20Block {
 
+    const MAX_SUB_COUNTER = ChaCha20Block::STATE_ARRAY_LENGTH * ChaCha20Block::INT_BIT_LENGTH >> 3;
+
     /**
      * cache block output
      */
@@ -23,7 +25,7 @@ class ChaCha20Cipher extends ChaCha20Block {
     private $block_sub_index;
 
     public function set_sub_counter(int $index) {
-        if ($index < 0 or $index >= ChaCha20Block::STATE_ARRAY_LENGTH * ChaCha20Block::INT_BIT_LENGTH >> 3) {
+        if ($index < 0 or $index >= self::MAX_SUB_COUNTER) {
             throw new ChaCha20Exception(sprintf("Sub-counter index %d is outstide range [0..%d[", $index, ChaCha20Block::STATE_KEY_LENGTH.'['));
         }
         $this->block_sub_index = $index;
@@ -61,7 +63,7 @@ class ChaCha20Cipher extends ChaCha20Block {
         for ($i = 0; $i < strlen($input); $i++)
         {
             // if end of current block, generate a new one
-            if ($this->block_sub_index == ChaCha20Block::STATE_ARRAY_LENGTH * ChaCha20Block::INT_BIT_LENGTH >> 3)
+            if ($this->block_sub_index == self::MAX_SUB_COUNTER)
             {
                 $this->block_sub_index = 0;
                 $this->inc_counter();
