@@ -8,12 +8,21 @@ php:
   - nightly
 
 # Commands to be run before your environment runs.
+# we create a folder for coverage coveralls.io
 before_script:
   - composer self-update
   - composer install --prefer-dist --no-interaction --dev
+  - mkdir -p build/logs
 
 # Commands you want to run that will verify your build.
-script: phpunit
+script:
+  ## PHPUnit
+  - phpunit -c ./ --coverage-text --coverage-clover build/logs/clover.xml
+
+# upload coverage log to coveralls
+after_script:
+  ## Coveralls
+  - php vendor/bin/coveralls -v
 
 # Customize when the notification emails are sent.
 notifications:

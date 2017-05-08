@@ -9,14 +9,34 @@ A pure-php implementation of ChaCha20, fully tested on both 32-bit php and 64 bi
 
 Tested on Ubuntu 16.04 LTS (with php 7.0)
 
-phpunit asks for following system components :
+basic system components :
 
-    sudo apt-get install composer php-xml php-mbstring zip
+    sudo apt-get install composer
 
-Install with composer
+phpunit asks for following system additional components :
+
+    sudo apt-get install php-xml php-mbstring zip
+
+coveralls.io asks for following system additional components :
+
+    sudo apt-get install php-curl
+
+additionnal package if you want to run code coverage locally :
+
+    sudo apt-get install php-xdebug
+
+Install with composer (dev)
 
     composer install
 
+Install with composer (production)
+
+    composer install --no-dev
+
 Run tests with composer
 
-    composer exec phpunit
+    composer exec -- phpunit
+
+Run tests with composer with code coverage (requires xdebug, see above)
+
+    composer exec -- phpunit --coverage-text
