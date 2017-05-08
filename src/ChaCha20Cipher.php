@@ -26,7 +26,10 @@ class ChaCha20Cipher extends ChaCha20Block {
 
     public function set_sub_counter(int $index) {
         if ($index < 0 or $index >= self::MAX_SUB_COUNTER) {
-            throw new ChaCha20Exception(sprintf("Sub-counter index %d is outstide range [0..%d[", $index, ChaCha20Block::STATE_KEY_LENGTH.'['));
+            throw new ChaCha20Exception(sprintf(
+                "Sub-counter index %d is outstide range [0..%d[",
+                $index,
+                self::MAX_SUB_COUNTER));
         }
         $this->block_sub_index = $index;
     }
