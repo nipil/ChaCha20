@@ -37,6 +37,7 @@ Run tests with composer
 
     composer exec -- phpunit
 
-Run tests with composer with code coverage (requires xdebug, see above)
+Run tests with composer with local code coverage (requires xdebug, see above)
 
-    composer exec -- phpunit --coverage-text
+    mkdir -p build/html
+    composer exec -- phpunit --coverage-text --coverage-html build/html/
