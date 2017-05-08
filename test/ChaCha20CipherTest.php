@@ -160,8 +160,32 @@ final class ChaCha20CipherTest extends TestCase
      * @depends testConstructorValued
      * @expectedException ChaCha20\ChaCha20Exception
      */
-    public function testExceptionSubCounter($c)
+    public function testExceptionSubCounterOverload($c)
     {
         $c->set_sub_counter(64);
+    }
+
+    /**
+     * @depends testConstructorValued
+     * @expectedException ChaCha20\ChaCha20Exception
+     */
+    public function testExceptionSubCounterNegative($c)
+    {
+        $c->set_sub_counter(-1);
+    }
+
+    /**
+     * @depends testConstructorValued
+     */
+    public function testSubCounter($c)
+    {
+        $n = ChaCha20Block::STATE_ARRAY_LENGTH * ChaCha20Block::INT_BIT_LENGTH >> 3;
+        for ($i=0; $i<$n; $i++) {
+            $c->set_sub_counter($i);
+            $this->assertEquals(
+                $i,
+                $c->get_sub_counter(),
+                sprintf("sub counter test %d", $i));
+        }
     }
 }
